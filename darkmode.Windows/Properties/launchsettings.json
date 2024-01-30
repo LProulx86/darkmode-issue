@@ -1,0 +1,10 @@
+{
+	"profiles": {
+		"darkmode.Windows (Unpackaged)": {
+			"commandName": "Project"
+		},
+		"darkmode.Windows (Package)": {
+			"commandName": "MsixPackage"
+		}
+	}
+}
