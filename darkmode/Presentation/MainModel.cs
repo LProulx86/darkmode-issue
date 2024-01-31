@@ -1,30 +1,28 @@
 using Uno.Extensions.Navigation;
+using Uno.Extensions.Toolkit;
 
 namespace darkmode.Presentation;
 
 public partial record MainModel
 {
     private INavigator _navigator;
+    private IThemeService _themeService;
 
     public MainModel(
-        IStringLocalizer localizer,
-        IOptions<AppConfig> appInfo,
-        INavigator navigator)
+        INavigator navigator,
+        IThemeService themeService)
     {
         _navigator = navigator;
-        Title = "Main";
-        Title += $" - {localizer["ApplicationName"]}";
-        Title += $" - {appInfo?.Value?.Environment}";
+        _themeService = themeService;
+        Title = "Main Page";
+
     }
 
     public string? Title { get; }
 
-    public IState<string> Name => State<string>.Value(this, () => string.Empty);
-
     public async Task GoToSecond()
     {
-        var name = await Name;
-        await _navigator.NavigateRouteForResultAsync<SecondModel>(this, "Second", data: new Entity(name!), qualifier: Qualifiers.Dialog);
+        await _navigator.NavigateRouteForResultAsync<SecondModel>(this, "Second", qualifier: Qualifiers.Dialog);
     }
 
 }

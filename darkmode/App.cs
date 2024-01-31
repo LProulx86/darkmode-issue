@@ -1,4 +1,5 @@
 using darkmode.Views.Flyouts;
+using Microsoft.UI.Xaml;
 
 namespace darkmode;
 
@@ -69,8 +70,6 @@ public class App : Application
                     .AddRefitClient<IApiClient>(context))
                 .ConfigureServices((context, services) =>
                 {
-                    // TODO: Register your services
-                    //services.AddSingleton<IMyService, MyService>();
                 })
                 .UseNavigation(ReactiveViewModelMappings.ViewModelMappings, RegisterRoutes, configureServices: ConfigureNavServices)
             );
@@ -79,8 +78,18 @@ public class App : Application
 #if DEBUG
         MainWindow.EnableHotReload();
 #endif
-
         Host = await builder.NavigateAsync<Shell>();
+
+        var config = Host.Services.GetRequiredService<IOptions<AppConfig>>();
+        var themeService = MainWindow.GetThemeService();
+        var appTheme = config.Value?.IsDark switch
+        {
+            true => AppTheme.Dark,
+            false => AppTheme.Light,
+            _ => AppTheme.System
+        };
+
+        await themeService.SetThemeAsync(appTheme);
     }
 
     private void ConfigureNavServices(HostBuilderContext context, IServiceCollection services)
@@ -93,7 +102,7 @@ public class App : Application
         views.Register(
             new ViewMap(ViewModel: typeof(ShellModel)),
             new ViewMap<MainPage, MainModel>(),
-            new DataViewMap<SecondPage, SecondModel, Entity>()
+            new ViewMap<SecondPage, SecondModel>()
         );
 
         routes.Register(

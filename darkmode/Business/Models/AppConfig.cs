@@ -2,5 +2,5 @@ namespace darkmode.Business.Models;
 
 public record AppConfig
 {
-    public string? Environment { get; init; }
+    public bool IsDark { get; init; }
 }
